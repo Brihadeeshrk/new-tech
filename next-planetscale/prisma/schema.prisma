@@ -1,0 +1,29 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+// Referential integrity is a property of a data set that states that all its references are valid. 
+// Referential integrity requires that if one record references another, then the referenced record must exist
+// For example, if a Post model defines an author, then the author must also exist.
+
+datasource db {
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
+}
+
+// planetscale doesnt support foreign key constraints
+// and prisma defaults to using FK's to express relations among models
+// so we need to set the referentialIntegrity even though its deprecated when using Prisma with PlanetScale
+
+model Inquiry {
+  id      Int     @id @default(autoincrement())
+  name    String
+  email   String
+  subject String?
+  message String
+}

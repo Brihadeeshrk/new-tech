@@ -19,14 +19,29 @@ const Form: React.FC<FormProps> = () => {
     }));
   };
 
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(details);
+
+    try {
+      const res = await fetch("/api/inquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(details),
+      });
+      if (res.status !== 200) {
+        console.log("something went wrong");
+      } else {
+        setDetails({ name: "", email: "", subject: "", message: "" });
+        console.log("form submitted successfully !!!");
+      }
+    } catch (error: any) {
+      console.log("there was an error submitting", error);
+    }
   };
 
   return (
     <div className="mt-5">
-      <form onSubmit={onSubmit}>
+      <form action="#" method="POST" onSubmit={onSubmit}>
         <div className="flex flex-col border border-blue-300 w-full">
           <input
             name="name"

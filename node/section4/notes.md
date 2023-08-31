@@ -20,9 +20,12 @@ You can now use the fs object exported by the "fs" module.
 Third-party Modules need to be installed (via npm install in the project folder) AND imported.
 
 TYPES OF ERRORS
+
 syntax;
 grammatical errors and mistakes in the syntax
+
 runtime:
 errors that prevent you from running the server
+
 logical:
 you're getting the o/p but its not right and somethings wrong with the logic

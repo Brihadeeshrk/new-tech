@@ -119,3 +119,33 @@ return req.on("end", () => {
 + app.use(adminRoutes)
 + app.use(shopRoutes)
 ```
+
+## mvc arch
+
+- following an MVC architecture by having a separate folder called views where we serve the html files
+- to serve html files, we use the `path` core module along `sendFile()`
+
+```js
+const path = require("path");
+
+res.sendFile(path.join(__dirname, "../", "views", "filename.html"));
+// the reason we go up a folder, if because __dirname gives the path to the routes folder
+// and we use path because every OS may have a different way to construct the path
+
+// we could also optionally create a variable or a utility function that has the path to the root directory and we could just use that path and concatenate it with the views folder and so on
+
+// utils/path.js
+const path = require("path");
+
+module.exports = path.dirname(require.main.filename);
+```
+
+## serving files statically
+
+- all the styles are in the html document, which is why they work
+- how would we link it? the convention is that we have a folder `public` and this is the folder that is always exposed to the public so we don't need any permission to access it
+- we need to set the location of this public folder in app.js
+
+```js
+app.use(express.static(path.join(__dirname, "public")));
+```

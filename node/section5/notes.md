@@ -91,4 +91,31 @@ return req.on("end", () => {
 ```
 
 - we can just use a package called `body-parser` that does this for us and we can just plug it in to the app using `app.use`
-- and this, takes in an arg called `urlencoded()`. now this package doesnt parse data of all types, but it works for this example
+- and this, takes in an arg called `urlencoded()`. now this package doesn't parse data of all types, but it works for this example
+- you can filter the type of request even further by using `req.get(..)` or `req.post(..)` and so on
+
+## express router
+
+- to modularise code and enhance readability, we can use express router to contain routes in other files, and we can just `app.use` those routes
+
+```js
+// app.js
+- app.use("/products", (req, res) => {
+-   console.log(req.body);
+-   res.redirect("/");
+- });
+
+- app.use("/add-product", (req, res, next) => {
+-   res.send(
+-     "<form action='/products' method='POST'><input type='text' - name='product' /><button type='submit'>submit</button></form>"
+-   );
+- });
+
+- app.use("/", (req, res, next) => {
+-   // middleware that is triggered when we are at '/'
+-   res.send("<h1>hello from express</h1>");
+- });
+
++ app.use(adminRoutes)
++ app.use(shopRoutes)
+```

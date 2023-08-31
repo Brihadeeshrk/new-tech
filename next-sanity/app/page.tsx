@@ -1,17 +1,18 @@
 import Link from "next/link";
 import { client } from "./lib/sanity";
 import { Post } from "./lib/types";
+import { useState } from "react";
 
 async function getData(): Promise<Array<Post>> {
   const query = `*[_type == "post"]`;
-
   const data = await client.fetch(query);
-
   return data;
 }
 
 export default async function Home() {
   const data = await getData();
+  console.log("DATA", data);
+
   return (
     <div className="divide-y divide-gray-200 dark:divide-gray-700">
       <div className="space-y-2 pt-6  pb-8 md:space-y-5">

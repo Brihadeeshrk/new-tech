@@ -98,7 +98,7 @@ return req.on("end", () => {
 
 - to modularise code and enhance readability, we can use express router to contain routes in other files, and we can just `app.use` those routes
 
-```js
+```diff
 // app.js
 - app.use("/products", (req, res) => {
 -   console.log(req.body);

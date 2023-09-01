@@ -99,3 +99,13 @@ Product.fetchAll((products) => {
   });
 });
 ```
+
+#### refactoring
+
+- create a separate fn called `getProductsFromFile` that fetches the data from the file and serves it to the cb fn
+- and we can use this fn throughout the model where we need to read data from the file, which is basically the functionality of the `fetchAll()`
+- slightly complex in the save()
+- we were doing something similar right? we were reading from the file, appending the items to the array and rewriting the file
+- and we do 2/3 things in this separate fn, so why not use it and tweak the functionality?
+- in the `save()`, when we get the products[] as a `param` in the `cb fn` push the current obj to this array and write it to the file. thats it
+- if still unclear, just read this 2-3 times and you'll get it

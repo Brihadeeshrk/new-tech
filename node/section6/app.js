@@ -2,7 +2,6 @@ const path = require("path");
 
 const express = require("express");
 const bodyParser = require("body-parser");
-const expressHbs = require("express-handlebars");
 
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
@@ -11,15 +10,8 @@ const rootDir = require("./utils/path");
 const app = express();
 
 // setting global configuration value. can be used to set any values we may need throughout our app
-app.engine(
-  "handlebars",
-  expressHbs({
-    layoutsDir: "views/layouts/",
-    defaultLayout: "main-layout",
-    extname: "handlebars",
-  })
-);
-app.set("view engine", "handlebars");
+
+app.set("view engine", "ejs");
 app.set("views", "views");
 
 app.use(bodyParser.urlencoded({ extended: false }));

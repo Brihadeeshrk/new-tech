@@ -209,3 +209,46 @@ app.engine(
 ```
 
 - and by doing this, this layout file will be included in all the files being served
+
+## ejs
+
+- registered out of the box with express, so we dont need to use `app.engine()` and such
+- there is no concept of layouts in `ejs` but we'll figure that out in sometime
+
+### outputting dynamic content
+
+- the syntax to output data in ejs is like this
+
+```html
+<title><%= docTitle %></title>
+```
+
+- when outputting dynamic content, if the data is a variable or has some value we place a `=` right after the opening `%`. like this: `<%= var %>`
+- when conditionally rendering data, we need not place the `=`
+- when conditionally rendering data, within the `<% %>`, we can write normal vanilla js code and if we have a block of code that needs to be run, we can wrap that in `{}`
+
+```html
+<% if(prods.length > 0) { %>
+<div class="grid">
+  <% for(let product of prods) { %>
+  <!-- rest of code -->
+  <% } %>
+</div>
+<% } else { %>
+<!-- code  -->
+<% } %>
+```
+
+#### ejs layouts
+
+- ejs doesnt have a layouts concept per se, but we have a concept called `includes` which is very similar to react components
+- we just include repeating components into our ejs file
+- the syntax to include an `ejs` file is:
+
+```html
+<%- include('./includes/head.ejs') %>
+```
+
+- its important to note that, there is a `-` after the `<%` and this is used to render `html` blocks as is
+- if you use `=` instead of `-`, it will render that `ejs` file as text and display it on the screen
+- and the path to the component is relative to where the file currently is

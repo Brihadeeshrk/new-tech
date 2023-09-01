@@ -11,9 +11,11 @@ router.get("/", (req, res, next) => {
   console.log(adminData.data);
   res.render("shop", {
     prods: adminData.data,
-    docTitle: "Shop",
+    pageTitle: "Shop",
     path: "/",
-    length: adminData.data.length > 0 ? 1 : 0,
+    hasProducts: adminData.data.length > 0,
+    activeShop: true,
+    productCSS: true,
   });
 });
 

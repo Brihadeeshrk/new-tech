@@ -11,7 +11,14 @@ const rootDir = require("./utils/path");
 const app = express();
 
 // setting global configuration value. can be used to set any values we may need throughout our app
-app.engine("handlebars", expressHbs());
+app.engine(
+  "handlebars",
+  expressHbs({
+    layoutsDir: "views/layouts/",
+    defaultLayout: "main-layout",
+    extname: "handlebars",
+  })
+);
 app.set("view engine", "handlebars");
 app.set("views", "views");
 

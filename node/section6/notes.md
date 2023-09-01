@@ -192,3 +192,20 @@ router.get("/", (req, res, next) => {
 
 {{/if}}
 ```
+
+#### handlebars layouts
+
+- to use layouts in hbs we need to mention it while initialising the view engine in `app.js`
+
+```js
+app.engine(
+  "handlebars",
+  expressHbs({
+    layoutsDir: "views/layouts/",
+    defaultLayout: "main-layout",
+    extname: "handlebars",
+  })
+);
+```
+
+- and by doing this, this layout file will be included in all the files being served

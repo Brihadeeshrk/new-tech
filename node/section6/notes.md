@@ -74,3 +74,121 @@ res.render("shop", { data: adminData.data  docTitle: 'My Shop'});
 
 - we have a repeated structure in all our `.pug` files
 - we can eliminate this redundant code using `pug layouts`
+
+## handlebars
+
+- even though we installed `express-handlebars` we need to tell express that such a package exists
+- we didn't have to do this for `pug`, so just check the docs for each engine and see if express recognizes it or not
+- in this case, we need to do the following
+
+```js
+const expressHbs = require("express-handlebars");
+
+// express initialisation
+app.engine("handlebars", expressHbs());
+app.set("view engine", "handlebars");
+app.set("views", "views");
+// rest of app.js
+```
+
+### outputting dynamic content
+
+- we can output dynamic content using `{{ }}`
+
+```hbs
+<title>{{docTitle}}</title>
+```
+
+- when talking about conditional and iterative statements, there is a change in the syntax
+- we have the `{{}}` but we also have a `#` for special block statements
+- block statements are a block of code that need to be rendered conditionally or by a loop
+
+```hbs
+{{#if condition}}
+  <!-- block of code -->
+{{else}}
+  <!-- block of code -->
+{{/if}}
+<!-- closing the if block -->
+```
+
+- the problem with hbs is that, we cant write lines like `#if prods.length > 0` because hbs operates on a 0/1 or True/False basis
+- so we need to pass this condition from the nodejs server
+- so the code would look like this:
+
+```js
+// shop.js
+router.get("/", (req, res, next) => {
+  console.log(adminData.data);
+  res.render("shop", {
+    prods: adminData.data,
+    docTitle: "Shop",
+    path: "/",
+    length: adminData.data.length > 0 ? 1 : 0,
+  });
+});
+```
+
+```hbs
+{{#if length}}
+  <div class="grid">
+    <article class="card product-item">
+      <header class="card__header">
+        <h1 class="product__title">Great Book</h1>
+      </header>
+      <div class="card__image">
+        <img
+          src="https://cdn.pixabay.com/photo/2016/03/31/20/51/book-1296045_960_720.png"
+          alt="A Book"
+        />
+      </div>
+      <div class="card__content">
+        <h2 class="product__price">$19.99</h2>
+        <p class="product__description">A very interesting book about so many
+          even more interesting things!</p>
+      </div>
+      <div class="card__actions">
+        <button class="btn">Add to Cart</button>
+      </div>
+    </article>
+  </div>
+{{else}}
+  <h1>No Products Found</h1>
+
+{{/if}}
+```
+
+- there are some benefits to this approach as it forces us to have all of our logic on the nodejs server and keeps our front end file lean
+- to iterate over the products in the products[] we use the hbs operator `{{#each}}`
+- and we can't use `each.title` or something. since we go through `each` element, they will have just one title, one description and one price right? so we can just use `this.title` to output the title dynamically
+
+```hbs
+{{#if length}}
+  <div class="grid">
+  {{#each}}
+    <article class="card product-item">
+      <header class="card__header">
+        <h1 class="product__title">{{this.title}}</h1>
+      </header>
+      <div class="card__image">
+        <img
+          src="https://cdn.pixabay.com/photo/2016/03/31/20/51/book-1296045_960_720.png"
+          alt="A Book"
+        />
+      </div>
+      <div class="card__content">
+        <h2 class="product__price">$19.99</h2>
+        <p class="product__description">A very interesting book about so many
+          even more interesting things!</p>
+      </div>
+      <div class="card__actions">
+        <button class="btn">Add to Cart</button>
+      </div>
+    </article>
+    {/each}
+  </div>
+{{else}}
+  <h1>No Products Found</h1>
+
+{{/if}}
+```

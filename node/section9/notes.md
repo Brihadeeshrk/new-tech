@@ -27,6 +27,14 @@ exports.getProduct = (req, res, next) => {
 - and we simply pass that product to the `product-detail.ejs` file
 
 ```js
+// models/product.js
+static fetchById(id, cb) {
+getProductsFromFile((products) => {
+    const product = products.find((product) => product.id === id);
+    cb(product);
+});
+}
+
 // controller/shop.js
 exports.getProduct = (...) => {
   const pID = req.params.productID;
@@ -35,3 +43,13 @@ exports.getProduct = (...) => {
   })
 }
 ```
+
+## how to add to cart
+
+- `add to cart` is a `POST` req
+- with POST req, we can add a body of data
+- when we submit a form, we usually have an input field in it right? like how we have for adding a product
+- when 'adding to cart' there is no such i/p form for us to extract data from
+- so, we use a input field of type hidden to send the required data
+- took the form snippet and created a new `includes` and pasted it everywhere we have the add to cart button
+- the issue is, when we iterate and show all the products in `index.ejs`, we don't get the product.id field, which is why we've optionally passed the product as a param to the `includes` tag

@@ -78,7 +78,7 @@ fs.readFile(p, (err, fileContent) => {
 - create a local cart var with products and a totalQty property
 - if there's no err then parse this file's contents and set the cart's value to that
 
-1. check if the item `exists` in the cart or no
+2. check if the item `exists` in the cart or no
 
 - find the index of the item in the `cart.products[]`
 - have a dummy var called `updatedProduct`
@@ -88,7 +88,7 @@ const existingProductIndex = cart.products.findIndex((p) => p.id === id);
 const existingProduct = cart.products[existingProductIndex];
 ```
 
-1. if it does, update the qty or add it to the cart
+3. if it does, update the qty or add it to the cart
 
 - if it exists
 
@@ -101,7 +101,7 @@ const existingProduct = cart.products[existingProductIndex];
   - set the dummy var to hold the id of that item and set the qty to 1
   - and set the cart items
 
-1. update the total price
+4. update the total price
 
 - since the price is a `string` by default, add a `+` to numerise it
 - to update the price, add the price to the existing price

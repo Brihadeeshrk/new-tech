@@ -53,3 +53,88 @@ exports.getProduct = (...) => {
 - so, we use a input field of type hidden to send the required data
 - took the form snippet and created a new `includes` and pasted it everywhere we have the add to cart button
 - the issue is, when we iterate and show all the products in `index.ejs`, we don't get the product.id field, which is why we've optionally passed the product as a param to the `includes` tag
+- now we create a separate model for cart as it is its own logic
+- we add a static fn called `add to cart` which takes the id and the price
+- we need to do 4 things
+
+  - fetch the items in the cart
+  - check if the item exists in the cart or no
+  - if it does, update the qty or add it to the cart
+  - update the total price
+
+### methodology
+
+1. fetch items from the `data/cart.js` file
+
+- have a var that stores the path of the file that stores the cart details
+- read the file at that path
+
+```js
+fs.readFile(p, (err, fileContent) => {
+  // logic goes here
+});
+```
+
+- create a local cart var with products and a totalQty property
+- if there's no err then parse this file's contents and set the cart's value to that
+
+1. check if the item `exists` in the cart or no
+
+- find the index of the item in the `cart.products[]`
+- have a dummy var called `updatedProduct`
+
+```js
+const existingProductIndex = cart.products.findIndex((p) => p.id === id);
+const existingProduct = cart.products[existingProductIndex];
+```
+
+1. if it does, update the qty or add it to the cart
+
+- if it exists
+
+  - take the dummy `updatedProduct` var, and set it to the existingProduct after spreading
+  - update the qty by 1
+  - update the cart prods and set that index's item to updatedItem
+
+- if it doesnt
+
+  - set the dummy var to hold the id of that item and set the qty to 1
+  - and set the cart items
+
+1. update the total price
+
+- since the price is a `string` by default, add a `+` to numerise it
+- to update the price, add the price to the existing price
+
+### code
+
+```js
+static addProduct(id, productPrice) {
+    // fetch the previous cart
+    fs.readFile(p, (err, fileContent) => {
+      let cart = { products: [], totalQty: 0 };
+      if (!err) {
+        cart = JSON.parse(fileContent);
+      }
+      // check if item exists
+      const existingProductIndex = cart.products.findIndex((p) => p.id === id);
+      const existingProduct = cart.products[existingProductIndex];
+      let updatedProduct;
+      if (existingProduct) {
+        updatedProduct = { ...existingProduct };
+        // add it or increase the qty
+        updatedProduct.qty = updatedProduct.qty + 1;
+        cart.products = [...cart.products];
+        cart.products[existingProductIndex] = updatedProduct;
+      } else {
+        updatedProduct = { id: id, qty: 1 };
+        cart.products = [...cart.products, updatedProduct];
+      }
+      // update the total price
+      cart.totalQty += +productPrice;
+      fs.writeFile(p, JSON.stringify(cart), (err) => {
+        console.log(err);
+      });
+    });
+  }
+```

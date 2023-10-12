@@ -1,32 +1,37 @@
 import { SanityDocument } from "@sanity/client";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { groq } from "next-sanity";
-import Post from "@/components/Post";
 import { client } from "../../../sanity/lib/client";
+import Post from "@/components/Post";
+import dynamic from "next/dynamic";
+import PreviewPost from "@/components/PreviewPost";
+import { getClient } from "../../../sanity/lib/getClient";
 
-export const postQuery = groq`*[_type == "post" && slug.current == $slug][0]{
-  title,
-  mainImage,
-  body
+const PreviewProvider = dynamic(() => import("@/components/PreviewProvider"));
+
+export const postQuery = groq`*[_type == "post" && slug.current == $slug][0]{ 
+  title, mainImage, body
 }`;
 
 // Prepare Next.js to know which routes already exist
 export const getStaticPaths: GetStaticPaths = async () => {
   const paths = await client.fetch(
     groq`*[_type == "post" && defined(slug.current)][]{
-      "params": { "slug": slug.current }
-    }`
+        "params": { "slug": slug.current }
+      }`
   );
 
   return { paths, fallback: true };
 };
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const queryParams = { slug: params?.slug ?? `` };
+export const getStaticProps: GetStaticProps = async (context) => {
+  const preview = context.draftMode || false;
+  const previewToken = preview ? process.env.SANITY_READ_TOKEN : ``;
+  const client = getClient(previewToken);
 
-  const post = await client.fetch(postQuery, queryParams);
+  const data = await client.fetch(postQuery, context.params);
 
-  if (!post) {
+  if (!data) {
     return {
       props: {
         data: null,
@@ -34,17 +39,32 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     };
   }
 
-  return {
-    props: {
-      data: { post },
-    },
-  };
+  return { props: { data, preview, previewToken } };
 };
 
-export default function Page({ data }: { data: { post: SanityDocument } }) {
-  console.log(data);
+export default function Page({
+  data,
+  preview,
+  previewToken,
+}: {
+  data: SanityDocument;
+  preview: boolean;
+  previewToken?: string;
+}) {
   if (!data) {
     return <h1>this is the 404 page</h1>;
   }
-  return <Post post={data.post} />;
+
+  if (preview && previewToken) {
+    return (
+      <PreviewProvider previewToken={previewToken}>
+        <PreviewPost post={data} />
+        <div className="prose prose-lg px-4 prose-blue clear-both py-16 mx-auto">
+          <a href="/api/exit-preview">Exit preview</a>
+        </div>
+      </PreviewProvider>
+    );
+  }
+
+  return <Post post={data} />;
 }
